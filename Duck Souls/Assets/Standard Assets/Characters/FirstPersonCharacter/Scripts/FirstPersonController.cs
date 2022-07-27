@@ -41,7 +41,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_StepCycle;
         private float m_NextStep;
         private bool m_Jumping;
-        private AudioSource m_AudioSource;
+
+        private AudioSource m_AudioSource;  //Audio source
 
         // Use this for initialization
         private void Start()
