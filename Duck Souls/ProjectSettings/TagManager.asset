@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Bullet
   - Boss
+  - Fireball
   layers:
   - Default
   - TransparentFX
