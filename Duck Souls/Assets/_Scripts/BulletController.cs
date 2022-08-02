@@ -22,8 +22,8 @@ public class BulletController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //rb.velocity = transform.forward * bulletSpeed;  //move the bullet forward
-        transform.Translate(Vector3.forward * Time.deltaTime * bulletSpeed);
+        rb.velocity = transform.forward * bulletSpeed;  //move the bullet forward
+        //transform.Translate(Vector3.forward * Time.deltaTime * bulletSpeed);
     }
 
     void OnTriggerEnter(Collider other)

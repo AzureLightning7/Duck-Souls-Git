@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public int playerMaxHealth = 3;
-    private int currentHealth;
+    public int currentHealth;
 
     CanvasController canvasController;
 
@@ -19,27 +19,38 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (currentHealth == 0)
+        {
+            print("Game Over");
+        }
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Fireball")
         {
-            currentHealth--;
-            canvasController.DisableLatestHeart(currentHealth);
+            if (currentHealth <= 3 && currentHealth > 0)
+            {
+                currentHealth--;
+                canvasController.DisableLatestHeart(currentHealth);
+            }
         }
         else if (other.tag == "Small Healthpack")
         {
-            currentHealth++;
-            canvasController.EnableEarliestHeart(currentHealth);
-        }
-        else if (other.tag == "Large Healthpack")
-        {
-            while (currentHealth < playerMaxHealth)
+            if (currentHealth < 3 && currentHealth > 0)
             {
                 currentHealth++;
                 canvasController.EnableEarliestHeart(currentHealth);
+            }         
+        }
+        else if (other.tag == "Large Healthpack")
+        {
+            if (currentHealth < 3 && currentHealth > 0)
+            {   while (currentHealth < playerMaxHealth)
+                {
+                    currentHealth++;
+                    canvasController.EnableEarliestHeart(currentHealth);
+                }
             }
         }
     }

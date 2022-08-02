@@ -7,6 +7,8 @@ TagManager:
   - Bullet
   - Boss
   - Fireball
+  - Small Healthpack
+  - Large Healthpack
   layers:
   - Default
   - TransparentFX
