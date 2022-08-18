@@ -9,6 +9,7 @@ TagManager:
   - Fireball
   - Small Healthpack
   - Large Healthpack
+  - Blue Shard
   layers:
   - Default
   - TransparentFX

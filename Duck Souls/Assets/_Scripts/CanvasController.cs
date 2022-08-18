@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CanvasController : MonoBehaviour
 {
@@ -18,6 +19,14 @@ public class CanvasController : MonoBehaviour
         heart1 = GameObject.Find("Heart 1");    //find all three Hearts at start
         heart2 = GameObject.Find("Heart 2");
         heart3 = GameObject.Find("Heart 3");
+    }
+
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.O))
+        {
+            Application.Quit();
+        }
     }
 
     //Function that will disable the most right health bar
@@ -37,6 +46,7 @@ public class CanvasController : MonoBehaviour
         }
     }
 
+    //Function That enables the most left disabled heart
     public void EnableEarliestHeart(int newHealth)
     {
         if (newHealth == 3)             //if health is going from 2 to 3, enable 3rd heart
@@ -62,5 +72,10 @@ public class CanvasController : MonoBehaviour
     public void SetBossHealth(int bossHealth)       //Set the boss's current health to the new value inputed into the function
     {
         bossHealthSlider.value = bossHealth;
+    }
+
+    public void ExitGame()      //End the game application
+    {
+        Application.Quit();
     }
 }

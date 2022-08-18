@@ -8,9 +8,11 @@ public class BossController : MonoBehaviour
     //Other Scripts
     CanvasController canvasController;  //variable for canvas controller
 
+    //Boss Raycast Variables
+
     //Boss Attacking Variables
     public Transform playerPosition;    //variable for the position of the player objects
-    private int bossAttackState = 1;    //variable that stores the current state the boss is in
+    private string bossAttackState = "Shoot";    //variable that stores the current state the boss is in
     public bool canAttack = true;
 
     //Charging Variables
@@ -23,9 +25,7 @@ public class BossController : MonoBehaviour
     //Shooting Variables
     public Transform bossAttackOrigin;  //the position of the point where the boss projectiles will spawn
     public GameObject bossProjectile;   //the projectile the boss will shoot
-    public float bossFireRate = 1f;     //the number of projectiles the boss will fire in one second
-    private float canFire = 0f;         //variable that is compared to Time.time to see if the boss can fire
-    private int counter = 0;
+    public float bossFireRate = 0.5f;     //the number of projectiles the boss will fire in one second
 
     //Healthbar Variables
     public int bossMaxHealth;       //the boss's maximum health
@@ -39,38 +39,36 @@ public class BossController : MonoBehaviour
         canvasController.SetBossMaxHealth(bossMaxHealth);                               //tell the UI to set the boss healthbar max value as the boss's maximum health
 
         rb = gameObject.GetComponent<Rigidbody>();                                      //reference the Boss rigidbody
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
+        if (canAttack == true)                  //check if boss can attack
+        {
+            switch (bossAttackState)            //check which attaack state boss is currently in
+            {
+                case "diesofcutscene":
+                    //Boss enters charging phase
+                    canAttack = false;          //set canAttack to false to prevent multiple attacks running simultaneously
+                    Charge();
+                    break;
+
+                case "Shoot":
+                    //Boss enters shooting phase
+                    canAttack = false;          //prevent boss starting a new attack every frame
+                    StartCoroutine(Shoot());    //call shoot coroutine/function
+                    break;
+            }
+        }
+        
+
+        //transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
 
         if (isCharging == false)
         {
             transform.LookAt(playerPosition);
-        }
-
-        if (Time.time > canFire)    //if gametime is longer than canFire
-        {
-            if (canAttack == true && bossAttackState == 1 && counter < 3)                              //if the boss can attack, is in shooting state, and has not fired 3 times
-            {
-                FireProjectiles();  //Shoot balls
-                counter++;                                                                          //increase counter
-            }
-            else if (counter == 3)
-            {
-                counter = 0;
-                Charge();
-            }
-            canFire = Time.time + (1 / bossFireRate);
-        }
-
-        if (canAttack == true && bossAttackState == 0)    //if the boss can attack and is in the melee charge state
-        {
-            canAttack = false;
-            isCharging = true;
-            Invoke("StopCharging", bossChargeTime);
         }
 
         if (bossCurrentHealth <= 0) //if the boss's health reaches zero and he dies
@@ -90,31 +88,46 @@ public class BossController : MonoBehaviour
 
     void Charge()
     {
-        canAttack = true;
-        bossAttackState = 0;
+        isCharging = true;
+        Invoke("StopCharging", bossChargeTime);
     }
 
     void StopCharging()
     {
         isCharging = false;
-        canAttack = true;
-        Shoot();
+        Invoke("CanAttackTrue", 3);
     }
 
-    void Shoot()
+    private IEnumerator Shoot()
     {
-        canAttack = true;
-        bossAttackState = 1;
+        for (int i = 0; i < 3; i++)
+        {
+            Instantiate(bossProjectile, bossAttackOrigin.position, bossAttackOrigin.rotation);
+            yield return new WaitForSeconds(1 / bossFireRate);
+        }
+        StopShooting();
     }
 
-    public void FireProjectiles()
+    void StopShooting()
     {
-        Instantiate(bossProjectile, bossAttackOrigin.position, bossAttackOrigin.rotation);
+        StopCoroutine(Shoot());
+        Invoke("CanAttackTrue", 3);
     }
 
-    public void SetAtkTrue()
+    void CanAttackTrue()
     {
+        print("RESET");
         canAttack = true;
+    }
+
+    void AttackStateCharge()
+    {
+        bossAttackState = "Charge";
+    }
+
+    void AttackStateShoot()
+    {
+        bossAttackState = "Shoot";
     }
 
     public void TakeDamage(int damageAmount)
