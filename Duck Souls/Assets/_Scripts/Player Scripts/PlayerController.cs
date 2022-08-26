@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityStandardAssets.Characters.FirstPerson;
+using UnityStandardAssets.Characters.FirstPerson;   //needed for referencing the FPSController script
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,6 +17,9 @@ public class PlayerController : MonoBehaviour
     public bool speedBoostActive = false;           //does the player start with speed boost active
     public float speedBoostDuration = 5f;           //duration of the speed boost
 
+    //Animation Variables
+    Animator animator;
+
     CanvasController canvasController;              //canvas controller
     FirstPersonController firstPersonController;    //get reference to firstpersoncontroller script
 
@@ -26,9 +29,12 @@ public class PlayerController : MonoBehaviour
         canvasController = GameObject.Find("DUCK UI").GetComponent<CanvasController>(); //reference the canvascontroller script
         currentHealth = playerMaxHealth;                                                //set the player's current health to the max health on start
 
-        firstPersonController = GameObject.Find("THE DUCK").GetComponent<FirstPersonController>();  //reference the FPC script
+        firstPersonController = gameObject.GetComponent<FirstPersonController>();  //reference the FPC script
 
         hoverboardAfterburner.SetActive(speedBoostActive);  //set the afterburner active status to what the user chooses with speedBoostActive
+
+
+        animator = gameObject.GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -47,8 +53,10 @@ public class PlayerController : MonoBehaviour
         {
             if (currentHealth <= playerMaxHealth && currentHealth > 0)    //if player health is between 0 and max health inclusive, decrease health by one and set health bar to current health
             {
+                print("HIT!");
                 currentHealth--;
                 canvasController.DisableLatestHeart(currentHealth);
+                animator.SetTrigger("Take Damage");                         //play the damage animation
             }
         }
         else if (other.tag == "Small Healthpack")   //if player touches a small health pack
@@ -57,6 +65,7 @@ public class PlayerController : MonoBehaviour
             {
                 currentHealth++;
                 canvasController.EnableEarliestHeart(currentHealth);
+                animator.SetTrigger("Small Health Pack");                   //play the heal animation
             }         
         }
         else if (other.tag == "Large Healthpack")   //if player touches a large health pack
@@ -66,6 +75,7 @@ public class PlayerController : MonoBehaviour
                 {
                     currentHealth++;
                     canvasController.EnableEarliestHeart(currentHealth);
+                    animator.SetTrigger("Small Health Pack");               //play the heal animation
                 }
             }
         }
@@ -74,6 +84,7 @@ public class PlayerController : MonoBehaviour
             firstPersonController.IncreaseSpeed(speedIncreaseMultiplier);   //multiply speed by the speed multiplier
             hoverboardAfterburner.SetActive(true);                          //set the afterburner to active
             Invoke("StopSpeedBoost", speedBoostDuration);                   //call stop speed boost function after duration amount of seconds
+            animator.SetTrigger("Blue Shard");                              //Set Animation Transtion to do the flip
         }
     }
 
@@ -81,5 +92,6 @@ public class PlayerController : MonoBehaviour
     {
         firstPersonController.IncreaseSpeed(1 / speedIncreaseMultiplier);   //multiply the increased by the recipropcal of the multiplier to reset it back to it's original value
         hoverboardAfterburner.SetActive(false);                             //set the afterburner to inactive
+        animator.ResetTrigger("BlueShard");
     }
 }

@@ -30,7 +30,7 @@ public class GunController : MonoBehaviour
             if (Time.time > canFire)    //if gametime is longer than canFire
             {
                 Instantiate(bullet, gunBarrelEnd.position, gunBarrelEnd.rotation);
-                AudioSource.PlayClipAtPoint(shootSound, Camera.main.transform.position, 1f);
+                AudioSource.PlayClipAtPoint(shootSound, Camera.main.transform.position, .5f);
                 canFire = Time.time + (1 / fireRate);
             }
         }

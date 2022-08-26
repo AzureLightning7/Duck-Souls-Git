@@ -26,6 +26,7 @@ public class BossController : MonoBehaviour
     public Transform bossAttackOrigin;  //the position of the point where the boss projectiles will spawn
     public GameObject bossProjectile;   //the projectile the boss will shoot
     public float bossFireRate = 0.5f;     //the number of projectiles the boss will fire in one second
+    public int bossFireTimes = 3;
 
     //Healthbar Variables
     public int bossMaxHealth;       //the boss's maximum health
@@ -100,7 +101,7 @@ public class BossController : MonoBehaviour
 
     private IEnumerator Shoot()
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < bossFireTimes; i++)
         {
             Instantiate(bossProjectile, bossAttackOrigin.position, bossAttackOrigin.rotation);
             yield return new WaitForSeconds(1 / bossFireRate);
